@@ -36,7 +36,7 @@ experiment
     .verify(verifyResponse1Function)
       .flow({probability: 0.5})
         .post('/abc/#{res.2.prop2}',
-              {json: {a: "#{res.1.prop1}", "b": "#{res.2.prop2}"}})
+              {body: {a: "#{res.1.prop1}", "b": "#{res.2.prop2}"}})
         .verify(...)
         .end()
       .flow({probability: 0.5})
