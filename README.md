@@ -18,7 +18,7 @@ var flowbench = require('flowbench');
 var experiment = flowbench({
   base: 'http://localhost:3000',
   population: 100,
-  maxConcurrency: 50
+  maxConcurrentFlows: 50
 });
 
 experiment
