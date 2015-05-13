@@ -71,7 +71,7 @@ module.exports = function Flow(parent, options, experiment) {
 
   flow.verify = function() {
     var verifiers = Array.prototype.slice.call(arguments);
-    verifiers.forEach(function() {
+    verifiers.forEach(function(verifier) {
       tasks.push(function(cb) {
         var valid = false;
         var err;
@@ -81,10 +81,14 @@ module.exports = function Flow(parent, options, experiment) {
           err = _err;
         }
 
+        if (! err && valid instanceof Error) {
+          err = valid;
+        }
+
         if (err) {
           cb(err);
         } else if (! valid) {
-          cb(new Error('Unknown Error'));
+          cb(new Error('unknown verification error'));
         } else {
           cb();
         }
