@@ -3,11 +3,8 @@
   "version": "0.0.1",
   "description": "Flow Bench",
   "main": "index.js",
-  "directories": {
-    "test": "tape test/flow test/verify"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape test/*.js"
   },
   "repository": {
     "type": "git",
