@@ -106,7 +106,9 @@ module.exports = function Flow(parent, options, experiment) {
   };
 
   flow.flow = function(options) {
-    return new Flow(this, options, experiment);
+    var flow = new Flow(this, options, experiment);
+    tasks.push(flow);
+    return flow;
   };
 
   flow.end = function() {
