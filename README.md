@@ -45,7 +45,7 @@ experiment
     .verify(verifyResponse1Function);
 
 
-experiment.begin();
+experiment.begin({clients: 10000});
 experiment.once('end', function(results) {
   console.log('results:', results);
 });
