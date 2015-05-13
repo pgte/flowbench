@@ -98,6 +98,13 @@ module.exports = function Flow(parent, options, experiment) {
     return flow;
   };
 
+  flow.wait = function(ms) {
+    tasks.push(function(cb) {
+      setTimeout(cb, ms);
+    });
+    return flow;
+  };
+
   flow.flow = function(options) {
     return new Flow(this, options, experiment);
   };
