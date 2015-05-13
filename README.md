@@ -33,16 +33,19 @@ experiment
         b: ['VALUE1', 'VALUE2', 'VALUE3']
       }
     })
-    .verify(verifyResponse1Function)
-      .flow({probability: 0.5})
-        .post('/abc/#{res.2.prop2}',
-              {body: {a: "#{res.1.prop1}", "b": "#{res.2.prop2}"}})
-        .verify(...)
-        .end()
-      .flow({probability: 0.5})
-        .get('/abc')
-        .verify(...)
-        .end()
+    .verify(
+      flowbench.verify.response.statusCode(200),
+      flowbench.verify.response.body({a: '#{req.body.b}'})
+      )
+    .flow({probability: 0.5})
+      .post('/abc/#{res.2.prop2}',
+            {body: {a: "#{res.1.prop1}", "b": "#{res.2.prop2}"}})
+      .verify(...)
+      .end()
+    .flow({probability: 0.5})
+      .get('/abc')
+      .verify(...)
+      .end()
     .end()
   .flow({probability: 0.4})
     .get('/')
