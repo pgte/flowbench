@@ -62,3 +62,24 @@ experiment.once('end', function(results) {
   console.log('results:', results);
 });
 ```
+
+# API
+
+## flowbench(options)
+
+Options defaults:
+
+```js
+{
+  population: 1,
+  maxConcurrentFlows: Infinity,
+  requestDefaults: {
+    pool: true,
+    timeout: 10e3
+  }
+};
+```
+
+# License
+
+ISC

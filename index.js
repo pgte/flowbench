@@ -8,7 +8,10 @@ var Experiment = require('./experiment');
 var defaultOptions = {
   population: 1,
   maxConcurrentFlows: Infinity,
-  requestDefaults: {}
+  requestDefaults: {
+    pool: true,
+    timeout: 10e3
+  }
 };
 
 module.exports = function Flowbench(options) {
