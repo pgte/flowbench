@@ -3,7 +3,7 @@
 var EventEmitter = require('events').EventEmitter;
 var request = require('request');
 var inherits = require('inherits');
-var async = require('async');
+var distributeProbabilities = require('./lib/distribute-flow-probabilities');
 var debug = require('debug')('flowbench:flow');
 
 var Flow = require('./flow');
@@ -18,7 +18,7 @@ function Experiment(options) {
 
   options.request = request.defaults(options.requestDefaults);
   this.options = options;
-  this._pipeline = [];
+  this.flows = [];
   this._running = 0;
   this._done = 0;
 };
@@ -29,7 +29,7 @@ inherits(Experiment, EventEmitter);
 var E = Experiment.prototype;
 
 E.push = function push(fn) {
-  this._pipeline.push(fn);
+  this.flows.push(fn);
 };
 
 E.flow = function flow(options) {
@@ -39,7 +39,18 @@ E.flow = function flow(options) {
 }
 
 E.one = function(cb) {
-  async.series(this._pipeline, cb);
+  var random = Math.random();
+  var sum = 0;
+  var flow;
+  var idx = 0;
+  while(sum < random) {
+    flow = this.flows[idx];
+    sum += flow.options.probability;
+  }
+  if (! flow) {
+    throw new Error('No flow to select');
+  }
+  flow(cb);
 };
 
 E.launchSome = function() {
@@ -74,7 +85,8 @@ E.begin = function(cb) {
     this.once('end', cb);
   }
 
-  debug('beginning experiment, have %d tasks in pipeline', this._pipeline.length);
+  debug('beginning experiment, have %d tasks in pipeline', this.flows.length);
 
+  distributeProbabilities(this.flows);
   this.launchSome();
 };

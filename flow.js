@@ -3,11 +3,10 @@
 var async = require('async');
 var extend = require('xtend');
 var uuid = require('node-uuid').v4;
+var distributeProbabilities = require('./lib/distribute-flow-probabilities');
 var debug = require('debug')('flowbench:flow');
 
-var defaultOptions = {
-  probability: 1
-};
+var defaultOptions = {};
 
 module.exports = function Flow(parent, options, experiment) {
   var parentOptions = extend({}, parent.options);
@@ -23,13 +22,7 @@ module.exports = function Flow(parent, options, experiment) {
 
   var flow = function(cb) {
     debug('executing flow');
-    if (options.probability < 1 && Math.random() > options.probability) {
-      debug('bypassing flow');
-      cb();
-    } else {
-      debug('executing flow');
-      async.series(tasks, cb);
-    }
+    async.series(tasks, cb);
   };
 
   flow.options = options;
@@ -115,5 +108,11 @@ module.exports = function Flow(parent, options, experiment) {
     return parent;
   };
 
+  flow.type = 'flow';
+
   return flow;
+}
+
+function isFlow(task) {
+  return task.type == 'flow';
 }
