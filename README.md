@@ -35,7 +35,8 @@ experiment
       body: {a: "static value", b: "#{fixtures.b.random()}"},
       fixtures: {
         b: ['VALUE1', 'VALUE2', 'VALUE3']
-      }
+      },
+      timeout: 4000
     })
     .verify(
       flowbench.verify.response.statusCode(200),
