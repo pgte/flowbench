@@ -11,3 +11,15 @@ exports.status = function(status) {
     }
   };
 };
+
+exports.body = function(body) {
+  return function(req, res) {
+    if (res.body != body) {
+      return new Error(
+        'response body was ' + JSON.stringify(res.body) +
+        '. Expected ' + JSON.stringify(body));
+    } else {
+      return true;
+    }
+  }
+};
