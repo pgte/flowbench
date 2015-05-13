@@ -63,13 +63,13 @@ test('verify returning false', function(t) {
 test('verify returning an error', function(t) {
   t.plan(2);
 
-  var scope = nock('http://localhost:4001')
+  var scope = nock('http://localhost:4002')
     .get('/abc')
     .reply(200, 'this is the response body');
 
   var experiment = flowbench({
     requestDefaults: {
-      baseUrl: 'http://localhost:4001'
+      baseUrl: 'http://localhost:4002'
     }
   });
 
@@ -94,13 +94,13 @@ test('verify returning an error', function(t) {
 test('verify throwing an error', function(t) {
   t.plan(2);
 
-  var scope = nock('http://localhost:4001')
+  var scope = nock('http://localhost:4003')
     .get('/abc')
     .reply(200, 'this is the response body');
 
   var experiment = flowbench({
     requestDefaults: {
-      baseUrl: 'http://localhost:4001'
+      baseUrl: 'http://localhost:4003'
     }
   });
 
@@ -115,6 +115,34 @@ test('verify throwing an error', function(t) {
   experiment.once('error', function(err) {
     t.equal(err.message, 'just threw this');
   });
+
+  experiment.begin(function() {
+    t.ok(scope.isDone());
+  });
+});
+
+test('verify has access to last request and response', function(t) {
+  t.plan(3);
+
+  var scope = nock('http://localhost:4004')
+    .get('/abc')
+    .reply(200, 'this is the response body');
+
+  var experiment = flowbench({
+    requestDefaults: {
+      baseUrl: 'http://localhost:4004'
+    }
+  });
+
+  experiment
+    .flow()
+    .get('/abc')
+    .verify(function(req, res) {
+      t.equal(req.path, '/abc');
+      t.equal(res.body, 'this is the response body');
+      return true;
+    })
+    .end();
 
   experiment.begin(function() {
     t.ok(scope.isDone());

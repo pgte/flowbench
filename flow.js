@@ -52,11 +52,11 @@ module.exports = function Flow(parent, options, experiment) {
         debug('request options:', options);
 
         experiment.emit('request', options);
-        var request = parentOptions.request(options, function(err, res, body) {
+        var request = parentOptions.request(options, function(err, resp, body) {
           experiment.emit('response', res);
-          if (res) {
-            res.body = body;
-            res[options.id] = res;
+          if (resp) {
+            resp.body = body;
+            res[options.id] = resp;
           }
           cb(err);
         });
