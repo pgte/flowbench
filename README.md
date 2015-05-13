@@ -39,7 +39,7 @@ experiment
       timeout: 4000
     })
     .verify(
-      flowbench.verify.response.statusCode(200),
+      flowbench.verify.response.status(200),
       flowbench.verify.response.body({a: '#{req.body.b}'})
       )
     .flow({probability: 0.5})

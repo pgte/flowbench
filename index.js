@@ -16,7 +16,7 @@ var defaultOptions = {
   }
 };
 
-module.exports = function Flowbench(options) {
+exports = module.exports = function Flowbench(options) {
 
   debug('experiment with options %j', options);
   options = extend({}, defaultOptions, options);
@@ -25,6 +25,8 @@ module.exports = function Flowbench(options) {
 
   return Experiment(options);
 }
+
+exports.verify = require('./verify');
 
 function error(msg) {
   throw new Error(msg);
