@@ -9,7 +9,7 @@ var defaultOptions = {
   probability: 1
 };
 
-module.exports = function Flow(parent, options) {
+module.exports = function Flow(parent, options, experiment) {
   var parentOptions = extend({}, parent.options);
 
   options = extend({
@@ -38,7 +38,8 @@ module.exports = function Flow(parent, options) {
     flow[method] = function(url, options) {
       tasks.push(function(cb) {
         options = extend({}, options, {
-          uri: url
+          uri: url,
+          method: method.toUpperCase()
         });
         options.json = options.body;
 
@@ -50,7 +51,9 @@ module.exports = function Flow(parent, options) {
 
         debug('request options:', options);
 
+        experiment.emit('request', options);
         var request = parentOptions.request(options, function(err, res, body) {
+          experiment.emit('response', res);
           if (res) {
             res.body = body;
             res[options.id] = res;
@@ -92,7 +95,7 @@ module.exports = function Flow(parent, options) {
   };
 
   flow.flow = function(options) {
-    return new Flow(this, options);
+    return new Flow(this, options, experiment);
   };
 
   flow.end = function() {
