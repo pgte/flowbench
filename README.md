@@ -15,7 +15,10 @@ $ npm install flowbench
 ```js
 var flowbench = require('flowbench');
 
-var experiment = flowbench();
+var experiment = flowbench({
+  base: 'http://localhost:3000',
+  clients: 100
+});
 
 experiment
   .flow({probability: 0.6})
@@ -45,7 +48,7 @@ experiment
     .verify(verifyResponse1Function);
 
 
-experiment.begin({clients: 10000});
+experiment.begin();
 experiment.once('end', function(results) {
   console.log('results:', results);
 });
