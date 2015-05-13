@@ -48,6 +48,8 @@ module.exports = function Flow(parent, options) {
 
         lastRequest = options.id;
 
+        debug('request options:', options);
+
         var request = parentOptions.request(options, function(err, res, body) {
           if (res) {
             res.body = body;

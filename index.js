@@ -9,7 +9,9 @@ var defaultOptions = {
   population: 1,
   maxConcurrentFlows: Infinity,
   requestDefaults: {
-    pool: true,
+    pool: {
+      maxSockets: 5
+    },
     timeout: 10e3
   }
 };
