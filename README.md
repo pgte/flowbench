@@ -62,9 +62,6 @@ experiment
 experiment.begin(function(err, stats) {
   
 });
-experiment.once('end', function(results) {
-  console.log('results:', results);
-});
 ```
 
 # API
