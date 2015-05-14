@@ -7,17 +7,18 @@ var distributeProbabilities = require('./lib/distribute-flow-probabilities');
 var debug = require('debug')('flowbench:flow');
 
 var Flow = require('./flow');
+var Stats = require('./stats');
 
 module.exports = Experiment;
 
 function Experiment(options) {
   if (! (this instanceof Experiment)) {
-
     return new Experiment(options);
   }
 
   options.request = request.defaults(options.requestDefaults);
   this.options = options;
+  this.stats = Stats(this);
   this.flows = [];
   this._running = 0;
   this._done = 0;
@@ -85,7 +86,9 @@ E.begin = function(cb) {
   var self = this;
 
   if (cb) {
-    this.once('end', cb);
+    this.once('end', function() {
+      cb(null, this.stats.toJSON());
+    });
   }
 
   debug('beginning experiment, have %d tasks in pipeline', this.flows.length);

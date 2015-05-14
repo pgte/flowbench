@@ -21,6 +21,7 @@
     "deep-equal": "^1.0.0",
     "ejs": "^2.3.1",
     "inherits": "^2.0.1",
+    "measured": "^1.0.0",
     "node-uuid": "^1.4.3",
     "request": "^2.55.0",
     "xtend": "^4.0.0"

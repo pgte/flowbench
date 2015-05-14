@@ -1,5 +1,7 @@
 # flowbench
 
+HTTP traffic generator. Supports user flows with alternative paths.
+Stores stats on latency.
 
 # Install
 
