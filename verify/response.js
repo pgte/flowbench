@@ -1,5 +1,7 @@
 'use strict';
 
+var deepEqual = require('deep-equal');
+
 exports.status = function(status) {
   return function(req, res) {
     if (res.statusCode != status) {
@@ -14,7 +16,7 @@ exports.status = function(status) {
 
 exports.body = function(body) {
   return function(req, res) {
-    if (res.body != body) {
+    if (! deepEqual(res.body, body)) {
       return new Error(
         'response body was ' + JSON.stringify(res.body) +
         '. Expected ' + JSON.stringify(body));
