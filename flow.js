@@ -29,39 +29,42 @@ module.exports = function Flow(parent, options, experiment) {
 
   flow.options = options;
 
+  flow.request = function(method, url, options) {
+    checkNotFlowing();
+    tasks.push(function(cb) {
+      options = extend({}, options, {
+        uri: url,
+        method: method.toUpperCase()
+      });
+      options.json = options.body;
+
+      if (! options.id) {
+        options.id = uuid();
+      }
+
+      lastRequest = options.id;
+
+      debug('request options:', options);
+
+      var request = parentOptions.request(options, function(err, resp, body) {
+        experiment.emit('response', res);
+        if (resp) {
+          resp.body = body;
+          res[options.id] = resp;
+        }
+        cb(err);
+      });
+      experiment.emit('request', request);
+
+      req[options.id] = request;
+    });
+
+    return flow;
+  };
+
   ['get', 'post', 'delete', 'head', 'put'].forEach(function(method) {
     flow[method] = function(url, options) {
-      checkNotFlowing();
-      tasks.push(function(cb) {
-        options = extend({}, options, {
-          uri: url,
-          method: method.toUpperCase()
-        });
-        options.json = options.body;
-
-        if (! options.id) {
-          options.id = uuid();
-        }
-
-        lastRequest = options.id;
-
-        debug('request options:', options);
-
-        var request = parentOptions.request(options, function(err, resp, body) {
-          experiment.emit('response', res);
-          if (resp) {
-            resp.body = body;
-            res[options.id] = resp;
-          }
-          cb(err);
-        });
-        experiment.emit('request', request);
-
-        req[options.id] = request;
-
-      });
-
-      return flow;
+      return flow.request(method.toUpperCase(), url, options);
     };
   });
 
