@@ -1,6 +1,6 @@
 {
   "name": "flowbench",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Flow Bench",
   "main": "index.js",
   "scripts": {
