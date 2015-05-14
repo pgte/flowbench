@@ -86,8 +86,18 @@ E.begin = function(cb) {
   var self = this;
 
   if (cb) {
+    var calledback = false;
+    this.once('error', function(err) {
+      if (! calledback) {
+        calledback = true;
+        cb(err);
+      }
+    })
     this.once('end', function() {
-      cb(null, this.stats.toJSON());
+      if (! calledback) {
+        calledback = true;
+        cb(null, this.stats.toJSON());
+      }
     });
   }
 

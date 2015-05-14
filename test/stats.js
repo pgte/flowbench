@@ -10,7 +10,11 @@ test('basic flow with one request', function(t) {
     .get('/abc')
     .times(1000)
     .delay(100)
-    .reply(200);
+    .reply(200)
+    .post('/def')
+    .times(1000)
+    .delay(50)
+    .reply(201);
 
   var experiment = flowbench({
     population: 1000,
@@ -21,7 +25,8 @@ test('basic flow with one request', function(t) {
 
   experiment
     .flow()
-      .get('/abc');
+      .get('/abc')
+      .post('/def');
 
   experiment.begin(function(err, stats) {
     if (err) {
@@ -31,13 +36,25 @@ test('basic flow with one request', function(t) {
 
     t.equal(typeof stats, 'object');
 
+    console.log('%s', JSON.stringify(stats, null, '  '));
+
     t.equal(typeof stats.latencyNs, 'object', 'stats.latencyNs is object');
-    t.equal(stats.latencyNs.count, 1000);
+    t.equal(stats.latencyNs.count, 2000);
     t.ok(stats.latencyNs.max > 0, 'stats.latencyNs.max > 0');
 
     t.equal(typeof stats.requestsPerSecond, 'object');
-    t.equal(stats.requestsPerSecond.count, 1000);
+    t.equal(stats.requestsPerSecond.count, 2000);
     t.ok(stats.requestsPerSecond.currentRate > 0, 'stats.latencyNs.currentRate > 0');
+
+    var stat = stats.requests['GET http://localhost:9000/abc']
+    t.equal(typeof stat, 'object');
+    t.equal(stat.latencyNs.count, 1000);
+    t.ok(stat.latencyNs.max > 0, 'stats.latencyNs.max > 0');
+
+    var stat = stats.requests['POST http://localhost:9000/def']
+    t.equal(typeof stat, 'object');
+    t.equal(stat.latencyNs.count, 1000);
+    t.ok(stat.latencyNs.max > 0, 'stats.latencyNs.max > 0');
 
     t.end();
   });

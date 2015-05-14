@@ -18,8 +18,8 @@ module.exports = function Flow(parent, options, experiment) {
 
   var tasks = [];
   var flows = [];
-  var req = {};
-  var res = {};
+  var req = parent.options.req || {};
+  var res = parent.options.res || {};
   var templateData = {
     req: req,
     res: res
@@ -33,6 +33,8 @@ module.exports = function Flow(parent, options, experiment) {
   };
 
   flow.options = options;
+  flow.req = req;
+  flow.res = res;
 
   flow.request = function(method, url, options) {
     checkNotFlowing();
@@ -70,7 +72,10 @@ module.exports = function Flow(parent, options, experiment) {
       });
       experiment.emit('request', request);
 
-      req[options.id] = extend({}, request, {body: options.body});
+      req[options.id] = extend({}, request, {
+        body: options.body ? options.body : request.body,
+        qs: options.qs ? options.qs : request.qs
+      });
     });
 
     return flow;
