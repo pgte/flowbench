@@ -22,7 +22,8 @@ function Stats(experiment) {
     var stat = stats.requests[key];
     if (! stat) {
       stat = stats.requests[key] = {
-        latencyNs: new Measured.Histogram()
+        latencyNs: new Measured.Histogram(),
+        statusCodes: {}
       };
     }
 
@@ -31,6 +32,14 @@ function Stats(experiment) {
       var ns = diff[0] * 1e9 + diff[1];
       stats.latencyNs.update(ns);
       stat.latencyNs.update(ns);
+
+      var statusCodeStat = stat.statusCodes[response.statusCode];
+      if (! statusCodeStat) {
+        statusCodeStat =
+          stat.statusCodes[response.statusCode] =
+          new Measured.Counter();
+      }
+      statusCodeStat.inc();
 
       var statusCode = response.statusCode;
       var statusCodeStats = stats.statusCodes[statusCode];
