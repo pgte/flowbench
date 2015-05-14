@@ -10,7 +10,8 @@ function Stats(experiment) {
     latencyNs: new Measured.Histogram(),
     requests: {},
     statusCodes: {},
-    errors: {}
+    errors: {},
+    verificationErrors: {}
   };
 
   stats.requestsPerSecond.unref();
@@ -25,7 +26,8 @@ function Stats(experiment) {
       stat = stats.requests[key] = {
         latencyNs: new Measured.Histogram(),
         statusCodes: {},
-        errors: {}
+        errors: {},
+        verificationErrors: {}
       };
     }
 
@@ -67,7 +69,8 @@ function Stats(experiment) {
       stat = stats.requests[key] = {
         latencyNs: new Measured.Histogram(),
         statusCodes: {},
-        errors: {}
+        errors: {},
+        verificationErrors: {}
       };
     }
 
@@ -78,13 +81,41 @@ function Stats(experiment) {
     errorStat.inc();
   });
 
+  experiment.on('verify-error', function(err, req, res) {
+    var code = err.code || err.message;
+
+    var stat = stats.verificationErrors[code];
+    if (! stat) {
+      stat = stats.verificationErrors[code] = new Measured.Counter();
+    }
+    stat.inc();
+
+    var key = req.method + ' ' + req.uri.href;
+    var stat = stats.requests[key];
+    if (! stat) {
+      stat = stats.requests[key] = {
+        latencyNs: new Measured.Histogram(),
+        statusCodes: {},
+        errors: {},
+        verificationErrors: {}
+      };
+    }
+
+    var errorStat = stat.verificationErrors[code];
+    if (! errorStat) {
+      errorStat = stat.verificationErrors[code] = new Measured.Counter();
+    }
+    errorStat.inc();
+  });
+
   function toJSON() {
     var ret = {
       requestsPerSecond: stats.requestsPerSecond.toJSON(),
       latencyNs: stats.latencyNs.toJSON(),
       requests: {},
       statusCodes: {},
-      errors: {}
+      errors: {},
+      verificationErrors: {}
     };
 
     for(var req in stats.requests) {
@@ -107,10 +138,20 @@ function Stats(experiment) {
         };
       }
 
+      var verificationErrors = {};
+      for(var error in stats.requests[req].verificationErrors) {
+        var count = stats.requests[req].verificationErrors[error].toJSON();
+        verificationErrors[error] = {
+          count: count,
+          percentage: count / stats.requests[req].latencyNs.toJSON().count
+        };
+      }
+
       ret.requests[req] = {
         latencyNs: stats.requests[req].latencyNs.toJSON(),
         statusCodes: statusCodes,
-        errors: errors
+        errors: errors,
+        verificationErrors: verificationErrors
       };
     }
 
@@ -124,6 +165,14 @@ function Stats(experiment) {
 
     for(var error in stats.errors) {
       var count = stats.errors[error].toJSON();
+      ret.errors[error] = {
+        count: count,
+        percentage: count / ret.requestsPerSecond.count
+      };
+    }
+
+    for(var error in stats.verificationErrors) {
+      var count = stats.verificationErrors[error].toJSON();
       ret.errors[error] = {
         count: count,
         percentage: count / ret.requestsPerSecond.count

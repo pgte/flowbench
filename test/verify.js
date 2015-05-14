@@ -53,11 +53,15 @@ test('verify returning false', function(t) {
     })
     .end();
 
-  experiment.begin(function(err) {
+  experiment.once('verify-error', function(err) {
     t.equal(err.message, 'unknown verification error');
+  });
+
+  experiment.begin(function() {
     t.ok(scope.isDone());
   });
 });
+
 
 
 test('verify returning an error', function(t) {
@@ -81,8 +85,11 @@ test('verify returning an error', function(t) {
     })
     .end();
 
-  experiment.begin(function(err) {
+  experiment.on('verify-error', function(err) {
     t.equal(err.message, 'some custom error message');
+  });
+
+  experiment.begin(function() {
     t.ok(scope.isDone());
   });
 });
@@ -109,8 +116,11 @@ test('verify throwing an error', function(t) {
     })
     .end();
 
-  experiment.begin(function(err) {
+  experiment.once('verify-error', function(err) {
     t.equal(err.message, 'just threw this');
+  });
+
+  experiment.begin(function() {
     t.ok(scope.isDone());
   });
 });

@@ -115,14 +115,14 @@ module.exports = function Flow(parent, options, experiment) {
         if (! err && valid instanceof Error) {
           err = valid;
         }
+        if (! err && (typeof valid == 'boolean') && ! valid) {
+          err = new Error('unknown verification error');
+        }
 
         if (err) {
-          cb(err);
-        } else if (! valid) {
-          cb(new Error('unknown verification error'));
-        } else {
-          cb();
+          experiment.emit('verify-error', err, req[lastRequest], res[lastRequest]);
         }
+        cb();
       });
     });
 
