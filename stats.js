@@ -59,8 +59,17 @@ function Stats(experiment) {
     };
 
     for(var req in stats.requests) {
+      var statusCodes = {};
+      for(var statusCode in stats.requests[req].statusCodes) {
+        var count = stats.requests[req].statusCodes[statusCode].toJSON();
+        statusCodes[statusCode] = {
+          count: count,
+          percentage: count / stats.requests[req].latencyNs.toJSON().count
+        };
+      }
       ret.requests[req] = {
-        latencyNs: stats.requests[req].latencyNs.toJSON()
+        latencyNs: stats.requests[req].latencyNs.toJSON(),
+        statusCodes: statusCodes
       };
     }
 

@@ -50,11 +50,15 @@ test('basic flow with one request', function(t) {
     t.equal(typeof stat, 'object');
     t.equal(stat.latencyNs.count, 1000);
     t.ok(stat.latencyNs.max > 0, 'stats.latencyNs.max > 0');
+    t.equal(stat.statusCodes[200].count, 1000);
+    t.equal(stat.statusCodes[200].perentage, 1);
 
     var stat = stats.requests['POST http://localhost:9000/def']
     t.equal(typeof stat, 'object');
     t.equal(stat.latencyNs.count, 1000);
     t.ok(stat.latencyNs.max > 0, 'stats.latencyNs.max > 0');
+    t.equal(stat.statusCodes[201].count, 1000);
+    t.equal(stat.statusCodes[201].perentage, 1);
 
     var stat = stats.statusCodes[200];
     t.equal(typeof stat, 'object');
