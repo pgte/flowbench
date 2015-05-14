@@ -56,6 +56,11 @@ test('basic flow with one request', function(t) {
     t.equal(stat.latencyNs.count, 1000);
     t.ok(stat.latencyNs.max > 0, 'stats.latencyNs.max > 0');
 
+    var stat = stats.statusCodes[200];
+    t.equal(typeof stat, 'object');
+    t.equal(stat.count, 1000);
+    t.equal(stat.percentage, 0.5);
+
     t.end();
   });
 });

@@ -8,7 +8,8 @@ function Stats(experiment) {
   var stats = {
     requestsPerSecond: new Measured.Meter(),
     latencyNs: new Measured.Histogram(),
-    requests: {}
+    requests: {},
+    statusCodes: {}
   };
 
   stats.requestsPerSecond.unref();
@@ -30,6 +31,13 @@ function Stats(experiment) {
       var ns = diff[0] * 1e9 + diff[1];
       stats.latencyNs.update(ns);
       stat.latencyNs.update(ns);
+
+      var statusCode = response.statusCode;
+      var statusCodeStats = stats.statusCodes[statusCode];
+      if (! statusCodeStats) {
+        statusCodeStats = stats.statusCodes[statusCode] = new Measured.Counter();
+      }
+      statusCodeStats.inc();
     });
   });
 
@@ -37,12 +45,21 @@ function Stats(experiment) {
     var ret = {
       requestsPerSecond: stats.requestsPerSecond.toJSON(),
       latencyNs: stats.latencyNs.toJSON(),
-      requests: {}
+      requests: {},
+      statusCodes: {}
     };
 
     for(var req in stats.requests) {
       ret.requests[req] = {
         latencyNs: stats.requests[req].latencyNs.toJSON()
+      };
+    }
+
+    for(var code in stats.statusCodes) {
+      var count = stats.statusCodes[code].toJSON();
+      ret.statusCodes[code] = {
+        count: count,
+        percentage: count / ret.requestsPerSecond.count
       };
     }
 
