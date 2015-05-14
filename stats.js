@@ -72,7 +72,7 @@ function Stats(experiment) {
     }
 
     var errorStat = stat.errors[code];
-    if (! stat) {
+    if (! errorStat) {
       errorStat = stat.errors[code] = new Measured.Counter();
     }
     errorStat.inc();
