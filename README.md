@@ -1,5 +1,7 @@
 # flowbench
 
+[![Build Status](https://travis-ci.org/pgte/flowbench.svg?branch=master)](https://travis-ci.org/pgte/flowbench)
+
 HTTP traffic generator. Supports user flows with alternative paths.
 Stores stats on latency.
 
