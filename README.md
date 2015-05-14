@@ -232,6 +232,13 @@ If the verification fails, this function can either:
 
 Otherwise, if verification passed, this function should return `true`.
 
+### flow builtin verifiers
+
+You can use the following verifiers:
+
+* flowbench.verify.response.status(201)
+* flowbench.verify.response.body({a:1, b:2})
+
 
 ## About string interpolation and templating
 
