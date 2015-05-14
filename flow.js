@@ -48,7 +48,7 @@ module.exports = function Flow(parent, options, experiment) {
         uri: template.render(url, data),
         method: method.toUpperCase()
       });
-      options.json = options.body || true;
+      options.json = (typeof options.body == 'object');
 
       options = template.render(options, data);
 
@@ -70,7 +70,7 @@ module.exports = function Flow(parent, options, experiment) {
       });
       experiment.emit('request', request);
 
-      req[options.id] = request;
+      req[options.id] = extend({}, request, {body: options.body});
     });
 
     return flow;

@@ -1,6 +1,7 @@
 'use strict';
 
 var deepEqual = require('deep-equal');
+var template = require('../lib/template');
 
 exports.status = function(status) {
   return function(req, res) {
@@ -15,7 +16,9 @@ exports.status = function(status) {
 };
 
 exports.body = function(body) {
+  var tpl = template.prepare(body);
   return function(req, res) {
+    var body = template.render(tpl, {req: req, res: res});
     if (! deepEqual(res.body, body)) {
       return new Error(
         'response body was ' + JSON.stringify(res.body) +

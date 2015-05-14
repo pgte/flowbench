@@ -8,7 +8,7 @@ var flowbench = require('../');
 test('templated flow can access req and res', function(t) {
   t.plan(1);
 
-  var scope = nock('http://localhost:6000')
+  var scope = nock('http://localhost:7000')
     .post('/abc')
     .reply(201, 'ABC')
     .post('/def', {a: 'ABCDEF', b: '/abc'})
@@ -16,7 +16,7 @@ test('templated flow can access req and res', function(t) {
 
   var experiment = flowbench({
     requestDefaults: {
-      baseUrl: 'http://localhost:6000'
+      baseUrl: 'http://localhost:7000'
     }
   });
 
