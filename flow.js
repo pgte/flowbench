@@ -5,6 +5,7 @@ var extend = require('xtend');
 var uuid = require('node-uuid').v4;
 var distributeProbabilities = require('./lib/distribute-flow-probabilities');
 var debug = require('debug')('flowbench:flow');
+var template = require('./lib/template');
 
 var defaultOptions = {};
 
@@ -19,6 +20,10 @@ module.exports = function Flow(parent, options, experiment) {
   var flows = [];
   var req = {};
   var res = {};
+  var templateData = {
+    req: req,
+    res: res
+  };
   var lastRequest;
   var flowing = false;
 
@@ -31,12 +36,21 @@ module.exports = function Flow(parent, options, experiment) {
 
   flow.request = function(method, url, options) {
     checkNotFlowing();
+
+    url = template.prepare(url);
+    options = template.prepare(options);
+
     tasks.push(function(cb) {
+      var data = extend({}, templateData, {
+        fixtures: options && options.fixtures
+      });
       options = extend({}, options, {
-        uri: url,
+        uri: template.render(url, data),
         method: method.toUpperCase()
       });
       options.json = options.body;
+
+      options = template.render(options, data);
 
       if (! options.id) {
         options.id = uuid();
@@ -64,7 +78,7 @@ module.exports = function Flow(parent, options, experiment) {
 
   ['get', 'post', 'delete', 'head', 'put'].forEach(function(method) {
     flow[method] = function(url, options) {
-      return flow.request(method.toUpperCase(), url, options);
+      return   flow.request(method.toUpperCase(), url, options);
     };
   });
 
