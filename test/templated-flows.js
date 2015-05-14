@@ -31,7 +31,8 @@ test('templated flow can access req and res', function(t) {
         }})
       .verify(flowbench.verify.response.body({b: 'DEF'}));
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.ok(scope.isDone());
   });
 });

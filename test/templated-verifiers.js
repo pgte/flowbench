@@ -27,7 +27,8 @@ test('verify templated response body', function(t) {
       flowbench.verify.response.body('<%= req.body %> plus the response'))
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.ok(scope.isDone());
   });
 });
@@ -55,7 +56,8 @@ test('verify templated response body', function(t) {
       flowbench.verify.response.body({b: '<%= req.body.a %> plus the response'}))
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.ok(scope.isDone());
   });
 });

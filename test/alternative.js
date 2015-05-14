@@ -34,7 +34,8 @@ test('chained flow combining verify and wait', function(t) {
         flowbench.verify.response.status(202),
         flowbench.verify.response.body('DEF'));
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.notOk(scope.isDone());
   });
 });
@@ -69,7 +70,8 @@ test('subflows after ops', function(t) {
         flowbench.verify.response.status(202),
         flowbench.verify.response.body('DEF'));
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.notOk(scope.isDone());
   });
 });
@@ -104,7 +106,8 @@ test('subflows after ops', function(t) {
         flowbench.verify.response.status(202),
         flowbench.verify.response.body('DEF'));
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.notOk(scope.isDone());
   });
 });
@@ -153,7 +156,8 @@ test('flows probability distribution', function(t) {
     }
   });
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     nock.cleanAll();
     t.ok(distribution['/abc'] > 0);
     t.ok(distribution['/def'] > 0);
@@ -207,7 +211,8 @@ test('subflows probability distribution', function(t) {
     }
   });
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     nock.cleanAll();
     t.ok(distribution['/abc'] > 0);
     t.ok(distribution['/def'] > 0);

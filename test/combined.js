@@ -33,7 +33,8 @@ test('chained flow combining verify and wait', function(t) {
       flowbench.verify.response.body('DEF'))
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.ok(scope.isDone());
   });
 });
@@ -66,7 +67,8 @@ test('nested flow', function(t) {
         flowbench.verify.response.status(202),
         flowbench.verify.response.body('DEF'));
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.ok(scope.isDone());
   });
 });

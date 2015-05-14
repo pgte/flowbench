@@ -21,7 +21,8 @@ test('basic flow with one request', function(t) {
     .get('/abc')
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     scope.done();
     t.end();
   });
@@ -46,7 +47,8 @@ test('basic flow with two requests', function(t) {
     .post('/def')
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     scope.done();
     t.end();
   });
@@ -72,7 +74,8 @@ test('basic population > 1 flow with one request', function(t) {
     .get('/abc')
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     scope.done();
     t.end();
   });
@@ -105,7 +108,8 @@ test('basic population > 1 concurrency', function(t) {
     }
   });
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     scope.done();
     t.end();
   });

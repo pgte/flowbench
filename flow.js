@@ -41,18 +41,26 @@ module.exports = function Flow(parent, options, experiment) {
 
     url = template.prepare(url);
     options = template.prepare(options);
+    var data = extend({}, templateData, {
+      fixtures: options && fixturize(options.fixtures)
+    });
 
     tasks.push(function(cb) {
-      var data = extend({}, templateData, {
-        fixtures: options && options.fixtures
-      });
       options = extend({}, options, {
         uri: template.render(url, data),
         method: method.toUpperCase()
       });
-      options.json = (typeof options.body == 'object');
-
       options = template.render(options, data);
+
+      debug('options.body: %j', options.body);
+      debug('options.json: %j', options.json);
+
+      if (typeof options.json == 'undefined' &&
+          typeof options.body == 'object')
+      {
+        options.json = true;
+      }
+
 
       if (! options.id) {
         options.id = uuid();
@@ -171,4 +179,23 @@ module.exports = function Flow(parent, options, experiment) {
 
 function isFlow(task) {
   return task.type == 'flow';
+}
+
+function fixturize(fixtures) {
+  if (Array.isArray(fixtures)) {
+    fixtures.random = pickRandom;
+  } else if(typeof fixtures == 'object') {
+    Object.keys(fixtures).forEach(function(key) {
+      if (fixtures.hasOwnProperty(key)) {
+        fixtures[key] = fixturize(fixtures[key]);
+      }
+    });
+  }
+
+  return fixtures;
+}
+
+function pickRandom() {
+  var i = Math.floor(Math.random() * this.length);
+  return this[i];
 }

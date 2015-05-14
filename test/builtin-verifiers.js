@@ -24,11 +24,8 @@ test('verify response code builtin', function(t) {
     .verify(flowbench.verify.response.status(201))
     .end();
 
-  experiment.once('error', function(err) {
+  experiment.begin(function(err) {
     t.equal(err.message, 'response status code was 200. Expected 201');
-  });
-
-  experiment.begin(function() {
     t.ok(scope.isDone());
   });
 });
@@ -52,7 +49,8 @@ test('verify response code builtin 2', function(t) {
     .verify(flowbench.verify.response.status(201))
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.ok(scope.isDone());
   });
 });
@@ -112,7 +110,8 @@ test('verify response body builtin 2', function(t) {
       )
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.ok(scope.isDone());
   });
 });

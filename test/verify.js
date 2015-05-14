@@ -26,7 +26,8 @@ test('verify returning true', function(t) {
     })
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.ok(scope.isDone());
   });
 });
@@ -52,11 +53,8 @@ test('verify returning false', function(t) {
     })
     .end();
 
-  experiment.once('error', function(err) {
+  experiment.begin(function(err) {
     t.equal(err.message, 'unknown verification error');
-  });
-
-  experiment.begin(function() {
     t.ok(scope.isDone());
   });
 });
@@ -83,11 +81,8 @@ test('verify returning an error', function(t) {
     })
     .end();
 
-  experiment.once('error', function(err) {
+  experiment.begin(function(err) {
     t.equal(err.message, 'some custom error message');
-  });
-
-  experiment.begin(function() {
     t.ok(scope.isDone());
   });
 });
@@ -114,11 +109,8 @@ test('verify throwing an error', function(t) {
     })
     .end();
 
-  experiment.once('error', function(err) {
+  experiment.begin(function(err) {
     t.equal(err.message, 'just threw this');
-  });
-
-  experiment.begin(function() {
     t.ok(scope.isDone());
   });
 });
@@ -146,7 +138,8 @@ test('verify has access to last request and response', function(t) {
     })
     .end();
 
-  experiment.begin(function() {
+  experiment.begin(function(err) {
+    if (err) { throw err; }
     t.ok(scope.isDone());
   });
 });
