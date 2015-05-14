@@ -317,6 +317,20 @@ experiment
   });
 ```
 
+## flowbench.humanize (experimental)
+
+Once you get the stats, you can get a more humanized version of it by passing it through `flowbench.humanize` like this:
+
+```js
+experiment.begin(function(err, stats) {
+  if (err) {
+    throw err;
+  }
+  stats = flowbench.humanize(stats);
+  console.log(JSON.stringify(stats, null, '  '));
+});
+```
+
 # License
 
 ISC

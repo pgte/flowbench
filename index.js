@@ -28,6 +28,8 @@ exports = module.exports = function Flowbench(options) {
 
 exports.verify = require('./verify');
 
+exports.humanize = require('./humanize');
+
 function error(msg) {
   throw new Error(msg);
 }
