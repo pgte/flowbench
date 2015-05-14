@@ -250,6 +250,14 @@ In option you pass into the request (url, options), you can use strings as EJS t
 (see first example above of using ids and templates).
 
 
+### Functions instead of values
+
+In any of the `url` or `options` for a request, you can pass in a function with the followig signature to be evaluated at run time:
+
+```js
+function (req, res, fixtures) {}
+```
+
 ## Fixtures
 
 You can define fixtures for any given request, and you can use these fixtures in your request options.

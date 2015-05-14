@@ -44,13 +44,14 @@ module.exports = function Flow(parent, options, experiment) {
     var data = extend({}, templateData, {
       fixtures: options && fixturize(options.fixtures)
     });
+    var dataAsArray = [data.req, data.res, data.fixtures];
 
     tasks.push(function(cb) {
       options = extend({}, options, {
-        uri: template.render(url, data),
+        uri: template.render(url, data, dataAsArray),
         method: method.toUpperCase()
       });
-      options = template.render(options, data);
+      options = template.render(options, data, dataAsArray);
 
       debug('options.body: %j', options.body);
       debug('options.json: %j', options.json);
