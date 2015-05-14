@@ -32,7 +32,7 @@ experiment
     .wait(500)
     .post('/abc', {
       id: 2,
-      body: {a: "static value", b: "#{fixtures.b.random()}"},
+      body: {a: "static value", b: "<%=fixtures.b.random()%>"},
       fixtures: {
         b: ['VALUE1', 'VALUE2', 'VALUE3']},
       timeout: 4000
@@ -41,8 +41,8 @@ experiment
       flowbench.verify.response.status(200),
       flowbench.verify.response.body({a: '#{req.body.b}'}))
     .flow({probability: 0.5})
-      .post('/abc/#{res.2.prop2}',
-            {body: {a: "#{res.1.prop1}", "b": "#{res.2.prop2}"}})
+      .post('/abc/<%= res[2].prop2 %>',
+            {body: {a: "<%= res[1].prop1 %>", "b": "<%= res[2].prop2} %>"}})
       .verify(...)
       .end()
     .flow({probability: 0.5})
