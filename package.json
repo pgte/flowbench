@@ -4,7 +4,7 @@
   "description": "Flow Bench",
   "main": "index.js",
   "scripts": {
-    "test": "tape test/*.js"
+    "test": "WAIT_BEFORE_STATS_MS=1 tape test/*.js"
   },
   "repository": {
     "type": "git",

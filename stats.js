@@ -9,7 +9,8 @@ function Stats(experiment) {
     requestsPerSecond: new Measured.Meter(),
     latencyNs: new Measured.Histogram(),
     requests: {},
-    statusCodes: {}
+    statusCodes: {},
+    errors: {}
   };
 
   stats.requestsPerSecond.unref();
@@ -23,7 +24,8 @@ function Stats(experiment) {
     if (! stat) {
       stat = stats.requests[key] = {
         latencyNs: new Measured.Histogram(),
-        statusCodes: {}
+        statusCodes: {},
+        errors: {}
       };
     }
 
@@ -50,15 +52,43 @@ function Stats(experiment) {
     });
   });
 
+  experiment.on('request-error', function(req, err) {
+    var code = err.code || err.message;
+
+    var stat = stats.errors[code];
+    if (! stat) {
+      stat = stats.errors[code] = new Measured.Counter();
+    }
+    stat.inc();
+
+    var key = req.method + ' ' + req.uri.href;
+    var stat = stats.requests[key];
+    if (! stat) {
+      stat = stats.requests[key] = {
+        latencyNs: new Measured.Histogram(),
+        statusCodes: {},
+        errors: {}
+      };
+    }
+
+    var errorStat = stat.errors[code];
+    if (! stat) {
+      errorStat = stat.errors[code] = new Measured.Counter();
+    }
+    errorStat.inc();
+  });
+
   function toJSON() {
     var ret = {
       requestsPerSecond: stats.requestsPerSecond.toJSON(),
       latencyNs: stats.latencyNs.toJSON(),
       requests: {},
-      statusCodes: {}
+      statusCodes: {},
+      errors: {}
     };
 
     for(var req in stats.requests) {
+
       var statusCodes = {};
       for(var statusCode in stats.requests[req].statusCodes) {
         var count = stats.requests[req].statusCodes[statusCode].toJSON();
@@ -67,15 +97,34 @@ function Stats(experiment) {
           percentage: count / stats.requests[req].latencyNs.toJSON().count
         };
       }
+
+      var errors = {};
+      for(var error in stats.requests[req].errors) {
+        var count = stats.requests[req].errors[error].toJSON();
+        errors[error] = {
+          count: count,
+          percentage: count / stats.requests[req].latencyNs.toJSON().count
+        };
+      }
+
       ret.requests[req] = {
         latencyNs: stats.requests[req].latencyNs.toJSON(),
-        statusCodes: statusCodes
+        statusCodes: statusCodes,
+        errors: errors
       };
     }
 
     for(var code in stats.statusCodes) {
       var count = stats.statusCodes[code].toJSON();
       ret.statusCodes[code] = {
+        count: count,
+        percentage: count / ret.requestsPerSecond.count
+      };
+    }
+
+    for(var error in stats.errors) {
+      var count = stats.errors[error].toJSON();
+      ret.errors[error] = {
         count: count,
         percentage: count / ret.requestsPerSecond.count
       };

@@ -96,7 +96,10 @@ E.begin = function(cb) {
     this.once('end', function() {
       if (! calledback) {
         calledback = true;
-        cb(null, this.stats.toJSON());
+        var waitFor = Number(process.env.WAIT_BEFORE_STATS_MS) || 5e3;
+        setTimeout(function() {
+          cb(null, self.stats.toJSON());
+        }, waitFor);
       }
     });
   }

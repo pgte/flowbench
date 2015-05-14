@@ -72,12 +72,15 @@ module.exports = function Flow(parent, options, experiment) {
       debug('request options:', options);
 
       var request = parentOptions.request(options, function(err, resp, body) {
-        experiment.emit('response', res);
         if (resp) {
+          experiment.emit('response', resp);
           resp.body = body;
           res[options.id] = resp;
         }
-        cb(err);
+        if (err) {
+          experiment.emit('request-error', request, err);
+        }
+        cb();
       });
       experiment.emit('request', request);
 
