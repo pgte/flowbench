@@ -10,7 +10,7 @@ var defaultOptions = {
   maxConcurrentFlows: Infinity,
   requestDefaults: {
     pool: {
-      maxSockets: 5
+      maxSockets: Infinity
     },
     timeout: 10e3
   }

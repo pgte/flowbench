@@ -43,9 +43,12 @@ E.one = function(cb) {
   var sum = 0;
   var flow;
   var idx = 0;
-  while(sum < random) {
+  while(sum < random && idx < this.flows.length) {
     flow = this.flows[idx];
-    sum += flow.options.probability;
+    if (flow) {
+      sum += flow.options.probability;
+    }
+    idx ++;
   }
   if (! flow) {
     throw new Error('No flow to select');

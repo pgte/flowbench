@@ -16,9 +16,11 @@ module.exports = function Flow(parent, options, experiment) {
   }, defaultOptions, options);
 
   var tasks = [];
+  var flows = [];
   var req = {};
   var res = {};
   var lastRequest;
+  var flowing = false;
 
   var flow = function(cb) {
     debug('executing flow');
@@ -29,6 +31,7 @@ module.exports = function Flow(parent, options, experiment) {
 
   ['get', 'post', 'delete', 'head', 'put'].forEach(function(method) {
     flow[method] = function(url, options) {
+      checkNotFlowing();
       tasks.push(function(cb) {
         options = extend({}, options, {
           uri: url,
@@ -44,7 +47,6 @@ module.exports = function Flow(parent, options, experiment) {
 
         debug('request options:', options);
 
-        experiment.emit('request', options);
         var request = parentOptions.request(options, function(err, resp, body) {
           experiment.emit('response', res);
           if (resp) {
@@ -53,6 +55,7 @@ module.exports = function Flow(parent, options, experiment) {
           }
           cb(err);
         });
+        experiment.emit('request', request);
 
         req[options.id] = request;
 
@@ -63,6 +66,7 @@ module.exports = function Flow(parent, options, experiment) {
   });
 
   flow.verify = function() {
+    checkNotFlowing();
     var verifiers = Array.prototype.slice.call(arguments);
     verifiers.forEach(function(verifier) {
       tasks.push(function(cb) {
@@ -92,6 +96,7 @@ module.exports = function Flow(parent, options, experiment) {
   };
 
   flow.wait = function(ms) {
+    checkNotFlowing();
     tasks.push(function(cb) {
       setTimeout(cb, ms);
     });
@@ -99,8 +104,12 @@ module.exports = function Flow(parent, options, experiment) {
   };
 
   flow.flow = function(options) {
+    if (! flowing) {
+      flowing = true;
+      tasks.push(doFlows);
+    }
     var flow = new Flow(this, options, experiment);
-    tasks.push(flow);
+    flows.push(flow);
     return flow;
   };
 
@@ -109,6 +118,31 @@ module.exports = function Flow(parent, options, experiment) {
   };
 
   flow.type = 'flow';
+
+  function doFlows(cb) {
+    distributeProbabilities(flows);
+    var random = Math.random();
+    var sum = 0;
+    var flow;
+    var idx = 0;
+    while(sum < random && idx < flows.length) {
+      flow = flows[idx];
+      if (flow) {
+        sum += flow.options.probability;
+      }
+      idx ++;
+    }
+    if (! flow) {
+      throw new Error('No flow to select');
+    }
+    flow(cb);
+  }
+
+  function checkNotFlowing() {
+    if (flowing) {
+      throw new Error('Adding more tasks after flows is not allowed');
+    }
+  }
 
   return flow;
 }

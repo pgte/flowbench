@@ -34,14 +34,12 @@ experiment
       id: 2,
       body: {a: "static value", b: "#{fixtures.b.random()}"},
       fixtures: {
-        b: ['VALUE1', 'VALUE2', 'VALUE3']
-      },
+        b: ['VALUE1', 'VALUE2', 'VALUE3']},
       timeout: 4000
     })
     .verify(
       flowbench.verify.response.status(200),
-      flowbench.verify.response.body({a: '#{req.body.b}'})
-      )
+      flowbench.verify.response.body({a: '#{req.body.b}'}))
     .flow({probability: 0.5})
       .post('/abc/#{res.2.prop2}',
             {body: {a: "#{res.1.prop1}", "b": "#{res.2.prop2}"}})
@@ -75,7 +73,7 @@ Options defaults:
   maxConcurrentFlows: Infinity,
   requestDefaults: {
     pool: {
-      maxSockets: 5
+      maxSockets: Infinity
     },
     timeout: 10e3
   }
