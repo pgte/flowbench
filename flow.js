@@ -49,7 +49,7 @@ module.exports = function Flow(parent, options, experiment) {
     url = template.prepare(url);
     options = template.prepare(options);
     var data = extend({}, templateData, {
-      fixtures: options && fixturize(options.fixtures)
+      fixtures: options && options.fixtures && fixturize(options.fixtures)
     });
     var dataAsArray = [data.req, data.res, data.fixtures];
 
@@ -149,7 +149,7 @@ module.exports = function Flow(parent, options, experiment) {
       flowing = true;
       tasks.push(doFlows);
     }
-    var flow = new Flow(this, options, experiment);
+    var flow = Flow(this, options, experiment);
     flows.push(flow);
     return flow;
   };
