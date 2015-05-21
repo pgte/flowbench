@@ -203,6 +203,8 @@ An Experience instance emits the following events:
 * `error (error)` — when an unrecoverrable error occurs.
 * `request (request)` - when a request is made.
 * `end ()` — once the experiment ends.
+* `request-error (req, err)` — when a request errors.
+* `verify-error (err, req, res)` — when a verification error occurs.
 
 
 ## Flow
