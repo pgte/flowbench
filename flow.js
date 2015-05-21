@@ -187,7 +187,10 @@ function isFlow(task) {
 
 function fixturize(fixtures) {
   if (Array.isArray(fixtures)) {
-    fixtures.random = pickRandom;
+    Object.defineProperty(fixtures, 'random', {
+      enumerable: false,
+      value: pickRandom
+    });
   } else if(typeof fixtures == 'object') {
     Object.keys(fixtures).forEach(function(key) {
       if (fixtures.hasOwnProperty(key)) {
