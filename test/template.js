@@ -38,5 +38,6 @@ test('works on functions', function(t) {
   var tpl = template.prepare({a:1, b:"c", d: function(a, b, c) {
     return [a,b,c].join(',');
   }});
-  t.deepEqual(template.render(tpl, {d: 'D'}, ['A', 'B', 'C']), {a:1, b:"c", d: "A,B,C"});
+  t.deepEqual(
+    template.render(tpl, {d: 'D'}, ['A', 'B', 'C']), {a:1, b:"c", d: "A,B,C"});
 });

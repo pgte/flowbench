@@ -22,7 +22,7 @@ function Experiment(options) {
   this.flows = [];
   this._running = 0;
   this._done = 0;
-};
+}
 
 inherits(Experiment, EventEmitter);
 
@@ -41,9 +41,9 @@ E.push = function push(fn) {
 };
 
 E.flow = function flow(options) {
-  var flow = Flow(this, options, this)
-  this.push(flow);
-  return flow;
+  var childFlow = Flow(this, options, this)
+  this.push(childFlow);
+  return childFlow;
 }
 
 E.one = function(cb) {

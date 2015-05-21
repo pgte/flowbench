@@ -53,7 +53,8 @@ test('verify templated response body', function(t) {
       body: {a:'this is the request body'}
     })
     .verify(
-      flowbench.verify.response.body({b: '<%= req.body.a %> plus the response'}))
+      flowbench.verify.response.body(
+        {b: '<%= req.body.a %> plus the response'}))
     .end();
 
   experiment.begin(function(err) {

@@ -92,8 +92,6 @@ test('verify response body builtin', function(t) {
 });
 
 
-return;
-
 test('verify response body builtin 2', function(t) {
   t.plan(1);
 

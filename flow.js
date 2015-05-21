@@ -127,7 +127,11 @@ module.exports = function Flow(parent, options, experiment) {
         }
 
         if (err) {
-          experiment.emit('verify-error', err, req[lastRequest], res[lastRequest]);
+          experiment.emit(
+            'verify-error',
+            err,
+            req[lastRequest],
+            res[lastRequest]);
         }
         cb();
       });
@@ -209,6 +213,7 @@ function fixturize(fixtures) {
 }
 
 function pickRandom() {
+  /* jshint validthis:true */
   var i = Math.floor(Math.random() * this.length);
   return this[i];
 }

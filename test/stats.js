@@ -44,7 +44,8 @@ test('stats', function(t) {
 
     t.equal(typeof stats.requestsPerSecond, 'object');
     t.equal(stats.requestsPerSecond.count, 2000);
-    t.ok(stats.requestsPerSecond.currentRate > 0, 'stats.latencyNs.currentRate > 0');
+    t.ok(stats.requestsPerSecond.currentRate > 0,
+        'stats.latencyNs.currentRate > 0');
 
     var stat = stats.requests['GET http://localhost:9000/abc']
     t.equal(typeof stat, 'object');
@@ -53,14 +54,14 @@ test('stats', function(t) {
     t.equal(stat.statusCodes[200].count, 1000);
     t.equal(stat.statusCodes[200].percentage, 1);
 
-    var stat = stats.requests['POST http://localhost:9000/def']
+    stat = stats.requests['POST http://localhost:9000/def']
     t.equal(typeof stat, 'object');
     t.equal(stat.latencyNs.count, 1000);
     t.ok(stat.latencyNs.max > 0, 'stats.latencyNs.max > 0');
     t.equal(stat.statusCodes[201].count, 1000);
     t.equal(stat.statusCodes[201].percentage, 1);
 
-    var stat = stats.statusCodes[200];
+    stat = stats.statusCodes[200];
     t.equal(typeof stat, 'object');
     t.equal(stat.count, 1000);
     t.equal(stat.percentage, 0.5);
