@@ -29,6 +29,13 @@ inherits(Experiment, EventEmitter);
 
 var E = Experiment.prototype;
 
+E.prepare = function prepare() {
+  distributeProbabilities(this.flows);
+  this.flows.forEach(function(flow) {
+    flow.prepare();
+  });
+};
+
 E.push = function push(fn) {
   this.flows.push(fn);
 };
@@ -106,6 +113,6 @@ E.begin = function(cb) {
 
   debug('beginning experiment, have %d tasks in pipeline', this.flows.length);
 
-  distributeProbabilities(this.flows);
+  this.prepare();
   this.launchSome();
 };

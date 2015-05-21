@@ -36,6 +36,13 @@ module.exports = function Flow(parent, options, experiment) {
   flow.req = req;
   flow.res = res;
 
+  flow.prepare = function() {
+    distributeProbabilities(flows);
+    flows.forEach(function(flow) {
+      flow.prepare();
+    });
+  };
+
   flow.request = function(method, url, options) {
     checkNotFlowing();
 
@@ -154,7 +161,6 @@ module.exports = function Flow(parent, options, experiment) {
   flow.type = 'flow';
 
   function doFlows(cb) {
-    distributeProbabilities(flows);
     var random = Math.random();
     var sum = 0;
     var flow;
