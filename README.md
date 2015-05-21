@@ -268,8 +268,21 @@ Otherwise, if verification passed, this function should return `true`.
 
 You can use the following verifiers:
 
-* flowbench.verify.response.status(201)
-* flowbench.verify.response.body({a:1, b:2})
+#### flowbench.verify.response.status
+
+Example:
+
+```
+flow.verify(flowbench.verify.response.status(201));
+```
+
+#### flowbench.verify.response.body
+
+Example:
+
+```js
+flow.verify(flowbench.verify.response.body({a:1, b:2}));
+```
 
 
 ## About string interpolation and templating
