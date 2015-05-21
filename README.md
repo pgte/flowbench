@@ -14,8 +14,6 @@ $ npm install flowbench
 
 # Use
 
-## Programatically
-
 ```js
 var flowbench = require('flowbench');
 
@@ -60,7 +58,10 @@ experiment
 
 
 experiment.begin(function(err, stats) {
-  
+  if (err) {
+    throw err;
+  }
+  console.log('finished. stats:', JSON.stringify(stats, null, '  '));
 });
 ```
 
