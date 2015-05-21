@@ -32,6 +32,8 @@
   "devDependencies": {
     "jshint": "^2.7.0",
     "nock": "^2.0.1",
+    "pre-commit": "^1.0.7",
     "tape": "^4.0.0"
-  }
+  },
+  "pre-commit": ["test"]
 }
