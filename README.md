@@ -196,6 +196,15 @@ The `stats` object is something like this:
 }
 ```
 
+### Emitted events
+
+An Experience instance emits the following events:
+
+* `error (error)` — when an unrecoverrable error occurs.
+* `request (request)` - when a request is made.
+* `end ()` — once the experiment ends.
+
+
 ## Flow
 
 One flow executes the requests added to it in sequence. You can add subflows to a flow (only after the requests have been specified).
