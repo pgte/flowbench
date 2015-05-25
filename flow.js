@@ -27,22 +27,15 @@ module.exports = function Flow(parent, options, experiment) {
   };
 
   var locals;
-  var lastRequest;
-  var lastResponse;
 
   var flowing = false;
 
-
   var flow = function(cb) {
     debug('executing flow');
-    var l;
-    var t = tasks;
 
-    if (locals) {
-      t = wrapTasks(locals(), tasks)
-    }
+    var l = locals ? locals() : {};
 
-    async.series(t, cb);
+    async.series(wrapTasks(l, tasks), cb);
   };
 
   flow.options = options;
@@ -87,6 +80,8 @@ module.exports = function Flow(parent, options, experiment) {
     var dataAsArray = [data.req, data.res, data.fixtures];
 
     tasks.push(function(cb) {
+      var self = this;
+
       options = extend({}, options, {
         uri: template.render(url, data, dataAsArray),
         method: method.toUpperCase()
@@ -132,10 +127,10 @@ module.exports = function Flow(parent, options, experiment) {
         }
         cb();
       });
-      lastRequest = request;
+      self._lastRequest = request;
 
       request.once('response', function(res) {
-        lastResponse = res;
+        self._lastResponse = res;
       });
 
       experiment.emit('request', request);
@@ -169,7 +164,7 @@ module.exports = function Flow(parent, options, experiment) {
         var valid = false;
         var err;
         try {
-          valid = verifier.call(null, lastRequest, lastResponse);
+          valid = verifier.call(null, this._lastRequest, this._lastResponse);
         } catch(_err) {
           err = _err;
         }
@@ -185,8 +180,8 @@ module.exports = function Flow(parent, options, experiment) {
           experiment.emit(
             'verify-error',
             err,
-            lastRequest,
-            lastResponse);
+            this._lastRequest,
+            this._lastResponse);
         }
         cb();
       });
