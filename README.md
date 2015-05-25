@@ -243,6 +243,23 @@ flow.locals({
 });
 ```
 
+### flow.repeat(count)
+
+Create a subflow and repeat it `count` times.
+
+To get back to the parent flow you must end it. Example:
+
+```js
+flow
+  .locals({
+    count: 0
+  })
+  .repeat(2)
+    .get('/', {body: '<%= ++locals.count %>'})
+    .end()
+  .end();
+```
+
 ### flow.flow(options)
 
 Creates a child flow.

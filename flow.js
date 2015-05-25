@@ -70,6 +70,12 @@ module.exports = function Flow(parent, options, experiment) {
     return flow;
   };
 
+  flow.repeat = function(repeats) {
+    var repeat = Repeat(experiment, flow, repeats);
+    tasks.push(repeat);
+    return repeat;
+  };
+
   flow.request = function(method, url, options) {
     checkNotFlowing();
 
@@ -277,3 +283,5 @@ function wrapTasks(locals, tasks) {
     };
   });
 }
+
+var Repeat = require('./repeat');
