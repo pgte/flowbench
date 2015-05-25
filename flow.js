@@ -3,7 +3,6 @@
 var Stream = require('stream').Stream;
 var async = require('async');
 var extend = require('xtend');
-var uuid = require('node-uuid').v4;
 var distributeProbabilities = require('./lib/distribute-flow-probabilities');
 var debug = require('debug')('flowbench:flow');
 var template = require('./lib/template');
@@ -25,7 +24,10 @@ module.exports = function Flow(parent, options, experiment) {
     req: req,
     res: res
   };
+
   var lastRequest;
+  var lastResponse;
+
   var flowing = false;
 
   var flow = function(cb) {
@@ -75,13 +77,6 @@ module.exports = function Flow(parent, options, experiment) {
         options.json = true;
       }
 
-
-      if (! options.id) {
-        options.id = uuid();
-      }
-
-      lastRequest = options.id;
-
       debug('request options:', options);
 
       var request = parentOptions.request(options, function(err, resp, body) {
@@ -95,16 +90,24 @@ module.exports = function Flow(parent, options, experiment) {
         }
         cb();
       });
+      lastRequest = request;
+
+      request.once('response', function(res) {
+        lastResponse = res;
+      });
+
       experiment.emit('request', request);
 
       if (stream) {
         stream.pipe(request);
       }
 
-      req[options.id] = extend({}, request, {
-        body: options.body ? options.body : request.body,
-        qs: options.qs ? options.qs : request.qs
-      });
+      if (options.id) {
+        req[options.id] = extend({}, request, {
+          body: options.body ? options.body : request.body,
+          qs: options.qs ? options.qs : request.qs
+        });
+      }
     });
 
     return flow;
@@ -124,7 +127,7 @@ module.exports = function Flow(parent, options, experiment) {
         var valid = false;
         var err;
         try {
-          valid = verifier.call(null, req[lastRequest], res[lastRequest]);
+          valid = verifier.call(null, lastRequest, lastResponse);
         } catch(_err) {
           err = _err;
         }
@@ -140,8 +143,8 @@ module.exports = function Flow(parent, options, experiment) {
           experiment.emit(
             'verify-error',
             err,
-            req[lastRequest],
-            res[lastRequest]);
+            lastRequest,
+            lastResponse);
         }
         cb();
       });

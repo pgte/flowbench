@@ -235,7 +235,7 @@ Options:
 
 * id: a string identifying the request. Can access it later inside templates.
 * fixtures: See the [Fixtures](#fixtures) section below.
-* body: object or string, representing the request body
+* body: object, a string or a stream, representing the request body
 * headers: object with headers
 * qs: an object with the query string names and values
 * form: sets the body to a querystring representation
