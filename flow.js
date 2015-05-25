@@ -26,14 +26,23 @@ module.exports = function Flow(parent, options, experiment) {
     res: res
   };
 
+  var locals;
   var lastRequest;
   var lastResponse;
 
   var flowing = false;
 
+
   var flow = function(cb) {
     debug('executing flow');
-    async.series(tasks, cb);
+    var l;
+    var t = tasks;
+
+    if (locals) {
+      t = wrapTasks(locals(), tasks)
+    }
+
+    async.series(t, cb);
   };
 
   flow.options = options;
@@ -45,6 +54,20 @@ module.exports = function Flow(parent, options, experiment) {
     flows.forEach(function(flow) {
       flow.prepare();
     });
+  };
+
+  flow.locals = function(fn) {
+    if (locals) {
+      throw new Error('already had defined flow locals');
+    }
+    if (typeof fn == 'object') {
+      var l = fn;
+      fn = function() {
+        return extend({}, l);
+      };
+    }
+    locals = fn;
+    return flow;
   };
 
   flow.request = function(method, url, options) {
@@ -62,7 +85,19 @@ module.exports = function Flow(parent, options, experiment) {
         uri: template.render(url, data, dataAsArray),
         method: method.toUpperCase()
       });
-      options = template.render(options, data, dataAsArray);
+
+      var d;
+
+      if (locals) {
+        d = extend({
+          locals: this
+        }, data);
+      }
+      else {
+        d = data;
+      }
+
+      options = template.render(options, d, dataAsArray);
 
       debug('options.body: %j', options.body);
       debug('options.json: %j', options.json);
@@ -116,7 +151,7 @@ module.exports = function Flow(parent, options, experiment) {
 
   ['get', 'post', 'delete', 'head', 'put'].forEach(function(method) {
     flow[method] = function(url, options) {
-      return   flow.request(method.toUpperCase(), url, options);
+      return flow.request(method.toUpperCase(), url, options);
     };
   });
 
@@ -233,4 +268,12 @@ function pickRandom() {
   /* jshint validthis:true */
   var i = Math.floor(Math.random() * this.length);
   return this[i];
+}
+
+function wrapTasks(locals, tasks) {
+  return tasks.map(function(task) {
+    return function() {
+      task.apply(locals, arguments);
+    };
+  });
 }
