@@ -1,5 +1,6 @@
 'use strict';
 
+var Stream = require('stream').Stream;
 var async = require('async');
 var extend = require('xtend');
 var uuid = require('node-uuid').v4;
@@ -63,8 +64,13 @@ module.exports = function Flow(parent, options, experiment) {
       debug('options.body: %j', options.body);
       debug('options.json: %j', options.json);
 
-      if (typeof options.json == 'undefined' &&
-          typeof options.body == 'object')
+      var stream = (options.body instanceof Stream) && options.body;
+
+      if (stream) {
+        delete options.body;
+      }
+      else if (typeof options.json == 'undefined' &&
+               typeof options.body == 'object')
       {
         options.json = true;
       }
@@ -90,6 +96,10 @@ module.exports = function Flow(parent, options, experiment) {
         cb();
       });
       experiment.emit('request', request);
+
+      if (stream) {
+        stream.pipe(request);
+      }
 
       req[options.id] = extend({}, request, {
         body: options.body ? options.body : request.body,
