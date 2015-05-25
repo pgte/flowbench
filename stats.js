@@ -176,7 +176,7 @@ function Stats(experiment) {
 
     for(error in stats.verificationErrors) {
       count = stats.verificationErrors[error].toJSON();
-      ret.errors[error] = {
+      ret.verificationErrors[error] = {
         count: count,
         percentage: count / ret.requestsPerSecond.count
       };
