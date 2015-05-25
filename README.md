@@ -29,19 +29,28 @@ var experiment = flowbench({
 
 experiment
   .flow({probability: 0.6})
+    locals(function() {
+      return {
+        counter: 0
+      }
+    })
     .get('/', {id: 1})
     .verify(verifyResponse1Function)
     .wait('0.5 seconds')
     .post('/abc', {
       id: 2,
-      body: {a: "static value", b: "<%=fixtures.b.random()%>"},
+      body: {
+        a: "static value",
+        b: "<%=fixtures.b.random()%>",
+        c: "<%=++ locals.counter%>"
+      },
       fixtures: {
         b: ['VALUE1', 'VALUE2', 'VALUE3']},
       timeout: 4000
     })
     .verify(
       flowbench.verify.response.status(200),
-      flowbench.verify.response.body({a: '#{req.body.b}'}))
+      flowbench.verify.response.body({a: '<%= req.body.b %>'}))
     .flow({probability: 0.5})
       .post('/abc/<%= res[2].prop2 %>',
             {body: {a: "<%= res[1].prop1 %>", "b": "<%= res[2].prop2} %>"}})
