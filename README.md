@@ -212,6 +212,28 @@ An Experience instance emits the following events:
 
 One flow executes the requests added to it in sequence. You can add subflows to a flow (only after the requests have been specified).
 
+### flow.locals(fn)
+
+You can define some session-specific locals (accessible in the template as the var `locals`) by defining a constructor function like this:
+
+```js
+flow.locals(function() {
+  return {
+    counter: 0
+  };
+});
+```
+
+### flow.locals(object)
+
+You can alternativel define the locals as an object that gets cloned per session:
+
+```js
+flow.locals({
+  counter: 0
+});
+```
+
 ### flow.flow(options)
 
 Creates a child flow.
