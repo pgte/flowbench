@@ -3,7 +3,11 @@
 var Flow = require('./flow');
 var debug = require('debug')('flowbench:repeat');
 
-var methods = ['request', 'get', 'post', 'delete', 'head', 'put', 'wait'];
+var methods = [
+ 'verify',
+ 'wait',
+ 'request',
+ 'get', 'post', 'delete', 'head', 'put'];
 
 module.exports = function(experiment, parentFlow, repeats) {
   var flow = Flow(parentFlow, {}, experiment);
