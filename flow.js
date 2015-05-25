@@ -6,6 +6,7 @@ var extend = require('xtend');
 var distributeProbabilities = require('./lib/distribute-flow-probabilities');
 var debug = require('debug')('flowbench:flow');
 var template = require('./lib/template');
+var humanInterval = require('human-interval');
 
 var defaultOptions = {};
 
@@ -153,10 +154,13 @@ module.exports = function Flow(parent, options, experiment) {
     return flow;
   };
 
-  flow.wait = function(ms) {
+  flow.wait = function(time) {
+    if (typeof time == 'string') {
+      time = humanInterval(time);
+    }
     checkNotFlowing();
     tasks.push(function(cb) {
-      setTimeout(cb, ms);
+      setTimeout(cb, time);
     });
     return flow;
   };

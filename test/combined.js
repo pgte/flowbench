@@ -60,7 +60,7 @@ test('nested flow', function(t) {
     .verify(
       flowbench.verify.response.status(201),
       flowbench.verify.response.body('ABC'))
-    .wait(300)
+    .wait('0.3 seconds')
     .flow()
       .post('/def')
       .verify(

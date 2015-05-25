@@ -31,7 +31,7 @@ experiment
   .flow({probability: 0.6})
     .get('/', {id: 1})
     .verify(verifyResponse1Function)
-    .wait(500)
+    .wait('0.5 seconds')
     .post('/abc', {
       id: 2,
       body: {a: "static value", b: "<%=fixtures.b.random()%>"},
