@@ -27,7 +27,8 @@ module.exports = function Flow(parent, options, experiment) {
     debug('executing flow', this);
 
     var session = extend({}, this, {
-      locals: localsFactory && localsFactory() || {}
+      locals: localsFactory && localsFactory() ||
+              this && this.locals || {}
     });
 
     debug('session:', session);

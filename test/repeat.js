@@ -113,3 +113,35 @@ test('repeat with function has access to locals', function(t) {
 });
 
 
+test('repeat subflow has access to locals', function(t) {
+  var scope = nock('http://localhost:12003')
+    .post('/repeat', 'bbooddyy')
+    .twice()
+    .reply(200);
+
+  var experiment = flowbench({
+    population: 2,
+    requestDefaults: {
+      baseUrl: 'http://localhost:12003'
+    }
+  });
+
+  experiment.flow()
+    .locals({
+      abc: 'bbooddyy'
+    })
+    .repeat(2)
+      .post('/repeat', {
+        body: '<%= locals.abc %>'
+      });
+
+  experiment.begin(function(err) {
+    if (err) { throw err; }
+    scope.done();
+    t.end();
+  });
+
+});
+
+
+

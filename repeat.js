@@ -27,8 +27,8 @@ module.exports = function(experiment, parentFlow, repeats) {
   }
 
   var repeat = function(cb) {
-    debug('executing repeat');
-    var self = this;
+    var session = this;
+    debug('executing repeat, session is %j', session);
     var count = 0;
     var calledback = false;
 
@@ -38,13 +38,13 @@ module.exports = function(experiment, parentFlow, repeats) {
       debug('calling child flow');
 
 
-      flow.call(self, function(err) {
+      flow.call(session, function(err) {
         count ++;
         debug('flow called back, count is %d', count);
         if (err) {
           callback(err);
         }
-        else if (whilst.call(self, count)) {
+        else if (whilst.call(session, count)) {
           _repeat(cb);
         }
         else {
