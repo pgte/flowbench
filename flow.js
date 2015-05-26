@@ -70,7 +70,7 @@ module.exports = function Flow(parent, options, experiment) {
     checkNotFlowing();
 
     var requestId = options && options.id;
-    if (options && typeof requestId != 'undefined') {
+    if (options && requestId !== undefined) {
       debug('request id:', requestId);
       delete options.id;
     }
@@ -202,10 +202,10 @@ module.exports = function Flow(parent, options, experiment) {
   };
 
   flow.wait = function(time) {
+    checkNotFlowing();
     if (typeof time == 'string') {
       time = humanInterval(time);
     }
-    checkNotFlowing();
     tasks.push(function(cb) {
       setTimeout(cb, time);
     });
