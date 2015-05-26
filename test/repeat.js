@@ -95,7 +95,7 @@ test('repeat with function has access to locals', function(t) {
       abc: 'def'
     })
     .repeat(function(idx) {
-      t.equals(this.abc, 'def');
+      t.equals(this.locals.abc, 'def');
       count ++;
       t.equal(idx, Math.ceil(count / 2));
       return idx < 2;

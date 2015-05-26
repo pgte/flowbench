@@ -61,7 +61,11 @@ E.one = function(cb) {
   if (! flow) {
     throw new Error('No flow to select');
   }
-  flow(cb);
+  var session = {
+    req: {},
+    res: {}
+  };
+  flow.call(session, cb);
 };
 
 E.launchSome = function() {

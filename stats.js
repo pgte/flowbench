@@ -21,6 +21,7 @@ function Stats(experiment) {
     stats.requestsPerSecond.mark();
 
     var key = req.method + ' ' + req.uri.href;
+
     var stat = stats.requests[key];
     if (! stat) {
       stat = stats.requests[key] = {

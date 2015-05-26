@@ -7,40 +7,35 @@ var distributeProbabilities = require('./lib/distribute-flow-probabilities');
 var debug = require('debug')('flowbench:flow');
 var template = require('./lib/template');
 var humanInterval = require('human-interval');
+var isStream = require('isstream');
 
 var defaultOptions = {};
 
 module.exports = function Flow(parent, options, experiment) {
+
+  var tasks = [];
+  var flows = [];
+  var localsFactory;
+  var flowing = false;
   var parentOptions = extend({}, parent.options);
 
   options = extend({
     request: parentOptions.request
   }, defaultOptions, options);
 
-  var tasks = [];
-  var flows = [];
-  var req = parent.options.req || {};
-  var res = parent.options.res || {};
-  var templateData = {
-    req: req,
-    res: res
-  };
-
-  var locals;
-
-  var flowing = false;
-
   var flow = function(cb) {
-    debug('executing flow');
+    debug('executing flow', this);
 
-    var l = locals ? locals() : {};
+    var session = extend({}, this, {
+      locals: localsFactory && localsFactory() || {}
+    });
 
-    async.series(wrapTasks(l, tasks), cb);
+    debug('session:', session);
+
+    async.series(wrapTasks(session, tasks), cb);
   };
 
   flow.options = options;
-  flow.req = req;
-  flow.res = res;
 
   flow.prepare = function() {
     distributeProbabilities(flows);
@@ -50,7 +45,7 @@ module.exports = function Flow(parent, options, experiment) {
   };
 
   flow.locals = function(fn) {
-    if (locals) {
+    if (localsFactory) {
       throw new Error('already had defined flow locals');
     }
     if (typeof fn == 'object') {
@@ -59,7 +54,7 @@ module.exports = function Flow(parent, options, experiment) {
         return extend({}, l);
       };
     }
-    locals = fn;
+    localsFactory = fn;
     return flow;
   };
 
@@ -70,67 +65,82 @@ module.exports = function Flow(parent, options, experiment) {
   };
 
   flow.request = function(method, url, options) {
+    debug('request options:', options);
     checkNotFlowing();
 
+    var requestId = options && options.id;
+    if (options && typeof requestId != 'undefined') {
+      debug('request id:', requestId);
+      delete options.id;
+    }
+
     url = template.prepare(url);
-    options = template.prepare(options);
-    var data = extend({}, templateData, {
-      fixtures: options && options.fixtures && fixturize(options.fixtures)
-    });
-    var dataAsArray = [data.req, data.res, data.fixtures];
+    options = template.prepare(options) || {};
+    debug('request options after prepare:', options);
+    var fixtures = options && options.fixtures && fixturize(options.fixtures);
+
+
+    debug('fixtures:', fixtures);
 
     tasks.push(function(cb) {
-      var self = this;
+      var session = this;
+      debug('current session:', session);
 
-      options = extend({}, options, {
+      var data = extend({}, session, {
+        fixtures: fixtures
+      });
+
+      var dataAsArray = [data.req, data.res, data.fixtures];
+
+      debug('options before rendering:', options);
+
+      var opt = extend({}, options, {
         uri: template.render(url, data, dataAsArray),
         method: method.toUpperCase()
       });
 
-      var d;
+      opt = template.render(opt, data, dataAsArray);
 
-      if (locals) {
-        d = extend({
-          locals: this
-        }, data);
-      }
-      else {
-        d = data;
-      }
+      debug('options.body: %j', opt.body);
+      debug('options.json: %j', opt.json);
 
-      options = template.render(options, d, dataAsArray);
-
-      debug('options.body: %j', options.body);
-      debug('options.json: %j', options.json);
-
-      var stream = (options.body instanceof Stream) && options.body;
+      var stream = isStream(opt.body) && opt.body;
 
       if (stream) {
-        delete options.body;
+        debug('body is a stream');
+        delete opt.body;
+      } else {
+        debug('body is NOT a stream');
       }
-      else if (typeof options.json == 'undefined' &&
-               typeof options.body == 'object')
+
+      if (!stream &&
+          typeof opt.json == 'undefined' &&
+          typeof opt.body == 'object')
       {
-        options.json = true;
+        opt.json = true;
       }
 
-      debug('request options:', options);
+      debug('request options:', opt);
 
-      var request = parentOptions.request(options, function(err, resp, body) {
+      var request = parentOptions.request(opt, function(err, resp, body) {
         if (resp) {
+          debug('have response');
           experiment.emit('response', resp);
           resp.body = body;
-          res[options.id] = resp;
+          if (requestId) {
+            session.res[requestId] = resp;
+          }
         }
         if (err) {
+          debug('request errored:', err);
           experiment.emit('request-error', request, err);
         }
         cb();
       });
-      self._lastRequest = request;
+      session._lastRequest = request;
 
       request.once('response', function(res) {
-        self._lastResponse = res;
+        session._lastResponse = res;
       });
 
       experiment.emit('request', request);
@@ -139,9 +149,9 @@ module.exports = function Flow(parent, options, experiment) {
         stream.pipe(request);
       }
 
-      if (options.id) {
-        req[options.id] = extend({}, request, {
-          body: options.body ? options.body : request.body,
+      if (requestId) {
+        session.req[requestId] = extend({}, request, {
+          body: options.body ? !stream && options.body : request.body,
           qs: options.qs ? options.qs : request.qs
         });
       }
@@ -271,10 +281,10 @@ function pickRandom() {
   return this[i];
 }
 
-function wrapTasks(locals, tasks) {
+function wrapTasks(session, tasks) {
   return tasks.map(function(task) {
     return function() {
-      task.apply(locals, arguments);
+      task.apply(session, arguments);
     };
   });
 }
