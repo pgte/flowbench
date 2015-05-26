@@ -11,14 +11,16 @@ function _humanize(o, isNs, key) {
   switch (typeof o) {
 
     case 'object':
-      Object.keys(o).forEach(function(key) {
-        if (key == 'latencyNs') {
-          o['latency'] = _humanize(o[key], true, key);
-          delete o[key];
-        } else {
-          o[key] = _humanize(o[key], isNs, key);
-        }
-      });
+      if (o !== null) {
+        Object.keys(o).forEach(function(key) {
+          if (key == 'latencyNs') {
+            o['latency'] = _humanize(o[key], true, key);
+            delete o[key];
+          } else {
+            o[key] = _humanize(o[key], isNs, key);
+          }
+        });
+      }
       break;
 
     case 'number':
