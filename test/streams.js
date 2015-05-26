@@ -24,7 +24,9 @@ test('supports stream as body', function(t) {
   experiment
     .flow()
     .post('/streaming', {
-      body: fs.createReadStream(bodyFilePath)
+      body: function() {
+        return fs.createReadStream(bodyFilePath);
+      }
     })
     .end();
 
