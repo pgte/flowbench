@@ -17,7 +17,7 @@ $ npm install flowbench
 ```js
 var flowbench = require('flowbench');
 
-var experiment = flowbench({
+var experiment = flowbench('experiment name', {
   base: 'http://localhost:3000',
   population: 100,
   maxConcurrentFlows: 50,
@@ -76,7 +76,7 @@ experiment.begin(function(err, stats) {
 
 # API
 
-## flowbench(options)
+## flowbench([name, ] [options])
 
 Options defaults:
 
