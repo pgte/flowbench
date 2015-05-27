@@ -11,11 +11,12 @@ var Stats = require('./stats');
 
 module.exports = Experiment;
 
-function Experiment(options) {
+function Experiment(name, options) {
   if (! (this instanceof Experiment)) {
-    return new Experiment(options);
+    return new Experiment(name, options);
   }
 
+  this.name = name;
   options.request = request.defaults(options.requestDefaults);
   this.options = options;
   this.stats = Stats(this);

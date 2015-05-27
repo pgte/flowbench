@@ -16,14 +16,21 @@ var defaultOptions = {
   }
 };
 
-exports = module.exports = function Flowbench(options) {
+exports = module.exports = function Flowbench(name, options) {
+
+
+  if (arguments.length < 2) {
+    options = name;
+    name = undefined;
+  }
 
   debug('experiment with options %j', options);
+
   options = extend({}, defaultOptions, options);
   options.requestDefaults = extend(
     {}, defaultOptions.requestDefaults, options.requestDefaults);
 
-  return Experiment(options);
+  return Experiment(name, options);
 }
 
 exports.verify = require('./verify');

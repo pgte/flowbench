@@ -114,6 +114,8 @@ function Stats(experiment) {
     var error, count;
 
     var ret = {
+      name: experiment.name,
+      options: experiment.options,
       requestsPerSecond: stats.requestsPerSecond.toJSON(),
       latencyNs: stats.latencyNs.toJSON(),
       requests: {},

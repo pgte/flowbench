@@ -16,7 +16,7 @@ test('stats', function(t) {
     .delay(50)
     .reply(201);
 
-  var experiment = flowbench({
+  var experiment = flowbench('experiment name', {
     population: 1000,
     requestDefaults: {
       baseUrl: 'http://localhost:9000'
@@ -36,7 +36,11 @@ test('stats', function(t) {
 
     t.equal(typeof stats, 'object');
 
-    console.log('%s', JSON.stringify(stats, null, '  '));
+    t.equal(stats.name, 'experiment name');
+
+    t.equal(stats.options.maxConcurrentFlows, Infinity);
+    t.equal(stats.options.population, 1000);
+    t.equal(stats.options.requestDefaults.baseUrl, 'http://localhost:9000');
 
     t.equal(typeof stats.latencyNs, 'object', 'stats.latencyNs is object');
     t.equal(stats.latencyNs.count, 2000);
