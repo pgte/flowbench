@@ -70,6 +70,12 @@ test('stats', function(t) {
     t.equal(stat.count, 1000);
     t.equal(stat.percentage, 0.5);
 
+    t.equal(typeof stats.lag, 'object');
+    t.equal(typeof stats.lag.min, 'number');
+    t.equal(typeof stats.lag.max, 'number');
+    t.equal(typeof stats.lag.variance, 'number');
+    t.equal(typeof stats.lag.p95, 'number');
+
     t.end();
   });
 });

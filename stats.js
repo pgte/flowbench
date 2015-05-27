@@ -1,11 +1,13 @@
 'use strict';
 
 var Measured = require('measured');
+var measureLag = require('./measure-lag');
 
 module.exports = Stats;
 
 function Stats(experiment) {
   var stats = {
+    lag: new Measured.Histogram(),
     requestsPerSecond: new Measured.Meter(),
     latencyNs: new Measured.Histogram(),
     requests: {},
@@ -110,12 +112,17 @@ function Stats(experiment) {
     errorStat.inc();
   });
 
+  measureLag.on('max lag', function(maxLag) {
+    stats.lag.update(maxLag);
+  });
+
   function toJSON() {
     var error, count;
 
     var ret = {
       name: experiment.name,
       options: experiment.options,
+      lag: stats.lag.toJSON(),
       requestsPerSecond: stats.requestsPerSecond.toJSON(),
       latencyNs: stats.latencyNs.toJSON(),
       requests: {},
