@@ -6,6 +6,8 @@ var toobusy = require('toobusy-js');
 
 var lagReporter = new EventEmitter();
 
+lagReporter.setMaxListeners(Infinity);
+
 module.exports = lagReporter;
 
 setInterval(function() {
