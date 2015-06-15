@@ -56,14 +56,14 @@ test('basic flow with two requests', function(t) {
 });
 
 
-test('basic population > 1 flow with one request', function(t) {
+test('basic sessions > 1 flow with one request', function(t) {
   var scope = nock('http://localhost:3003')
     .get('/abc')
     .times(10)
     .reply(200);
 
   var experiment = flowbench({
-    population: 10,
+    sessions: 10,
     requestDefaults: {
       baseUrl: 'http://localhost:3003'
     }
@@ -81,14 +81,14 @@ test('basic population > 1 flow with one request', function(t) {
   });
 });
 
-test('basic population > 1 concurrency', function(t) {
+test('basic sessions > 1 concurrency', function(t) {
   var scope = nock('http://localhost:3003')
     .get('/abc')
     .reply(200);
 
   var experiment = flowbench({
-    population: 10,
-    maxConcurrentFlows: 1,
+    sessions: 10,
+    maxConcurrentSessions: 1,
     requestDefaults: {
       baseUrl: 'http://localhost:3003'
     }

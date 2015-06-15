@@ -18,8 +18,8 @@ $ npm install flowbench
 var flowbench = require('flowbench');
 
 var experiment = flowbench('experiment name', {
-  population: 100,
-  maxConcurrentFlows: 50,
+  sessions: 100,
+  maxConcurrentSessions: 50,
   requestDefaults: {
     baseUrl: 'http://localhost:3000',
     timeout: 10000,
@@ -82,8 +82,8 @@ Options defaults:
 
 ```js
 {
-  population: 1,
-  maxConcurrentFlows: Infinity,
+  sessions: 1,
+  maxConcurrentSessions: Infinity,
   requestDefaults: {
     pool: {
       maxSockets: Infinity

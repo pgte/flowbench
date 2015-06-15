@@ -129,8 +129,8 @@ test('flows probability distribution', function(t) {
   setupMocks();
 
   var experiment = flowbench({
-    population: max,
-    maxConcurrentFlows: 1,
+    sessions: max,
+    maxConcurrentSessions: 1,
     requestDefaults: {
       baseUrl: 'http://localhost:6003'
     }
@@ -183,8 +183,8 @@ test('subflows probability distribution', function(t) {
   setupMocks();
 
   var experiment = flowbench({
-    population: max,
-    maxConcurrentFlows: 1,
+    sessions: max,
+    maxConcurrentSessions: 1,
     requestDefaults: {
       baseUrl: 'http://localhost:6004'
     }
