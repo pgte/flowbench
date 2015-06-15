@@ -26,6 +26,7 @@
     "humanize-duration": "^2.8.0",
     "inherits": "^2.0.1",
     "isstream": "^0.1.2",
+    "lodash": "^3.9.3",
     "measured": "^1.0.0",
     "node-uuid": "^1.4.3",
     "request": "^2.55.0",

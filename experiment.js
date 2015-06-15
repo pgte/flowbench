@@ -3,6 +3,7 @@
 var EventEmitter = require('events').EventEmitter;
 var request = require('request');
 var inherits = require('inherits');
+var clone = require('lodash').clone;
 var distributeProbabilities = require('./lib/distribute-flow-probabilities');
 var debug = require('debug')('flowbench:flow');
 
@@ -16,8 +17,12 @@ function Experiment(name, options) {
     return new Experiment(name, options);
   }
 
+  if (! options) {
+    options = {};
+  }
+
   this.name = name;
-  options.request = request.defaults(options.requestDefaults);
+  options.request = request.defaults(clone(options.requestDefaults, true));
   this.options = options;
   this.stats = Stats(this);
   this.flows = [];

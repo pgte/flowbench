@@ -11,7 +11,7 @@ function _humanize(o, isNs, key) {
   switch (typeof o) {
 
     case 'object':
-      if (o !== null) {
+      if (o !== null && isPlainObject(o)) {
         Object.keys(o).forEach(function(key) {
           if (key == 'latencyNs') {
             o['latency'] = _humanize(o[key], true, key);
@@ -40,4 +40,9 @@ function _humanize(o, isNs, key) {
   }
 
   return o;
+}
+
+
+function isPlainObject(o) {
+  return o.constructor == Object;
 }
