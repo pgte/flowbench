@@ -76,8 +76,8 @@ E.one = function(cb) {
 
 E.launchSome = function() {
   var self = this;
-  var left = this.options.population - this._done - this._running;
-  left = Math.min(left, this.options.maxConcurrentFlows);
+  var left = this.options.sessions - this._done - this._running;
+  left = Math.min(left, this.options.maxConcurrentSessions);
 
   if (! left) {
     this.emit('end');

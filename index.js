@@ -6,8 +6,8 @@ var debug = require('debug')('flowbench:flow');
 var Experiment = require('./experiment');
 
 var defaultOptions = {
-  population: 1,
-  maxConcurrentFlows: Infinity,
+  sessions: 1,
+  maxConcurrentSessions: Infinity,
   requestDefaults: {
     pool: {
       maxSockets: Infinity

@@ -15,7 +15,7 @@ test('repeat with number', function(t) {
     .reply(200);
 
   var experiment = flowbench({
-    population: 2,
+    sessions: 2,
     requestDefaults: {
       baseUrl: 'http://localhost:12000'
     }
@@ -45,7 +45,7 @@ test('repeat with function', function(t) {
     .reply(200);
 
   var experiment = flowbench({
-    population: 2,
+    sessions: 2,
     requestDefaults: {
       baseUrl: 'http://localhost:12001'
     }
@@ -82,7 +82,7 @@ test('repeat with function has access to locals', function(t) {
     .reply(200);
 
   var experiment = flowbench({
-    population: 2,
+    sessions: 2,
     requestDefaults: {
       baseUrl: 'http://localhost:12002'
     }
@@ -120,7 +120,7 @@ test('repeat subflow has access to locals', function(t) {
     .reply(200);
 
   var experiment = flowbench({
-    population: 2,
+    sessions: 2,
     requestDefaults: {
       baseUrl: 'http://localhost:12003'
     }

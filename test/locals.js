@@ -16,7 +16,7 @@ test('locals with a factory function', function(t) {
     .reply(200);
 
   var experiment = flowbench({
-    population: 2,
+    sessions: 2,
     requestDefaults: {
       baseUrl: 'http://localhost:11000'
     }
@@ -53,7 +53,7 @@ test('locals with an object', function(t) {
     .reply(200);
 
   var experiment = flowbench({
-    population: 2,
+    sessions: 2,
     requestDefaults: {
       baseUrl: 'http://localhost:11001'
     }
