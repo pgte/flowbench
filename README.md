@@ -18,10 +18,10 @@ $ npm install flowbench
 var flowbench = require('flowbench');
 
 var experiment = flowbench('experiment name', {
-  base: 'http://localhost:3000',
   population: 100,
   maxConcurrentFlows: 50,
   requestDefaults: {
+    baseUrl: 'http://localhost:3000',
     timeout: 10000,
     jar: false
   }
